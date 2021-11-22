@@ -7,6 +7,10 @@ require("dotenv").config();
 const contact = async (req, res) => {
     if (!req.body.recaptchaRes) {
         return {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST",
+            },
             statusCode: 200,
             body: JSON.stringify(`fail`),
         };
@@ -26,6 +30,10 @@ const contact = async (req, res) => {
 
     if (body.success === false) {
         return {
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST",
+            },
             statusCode: 200,
             body: JSON.stringify(`fail`),
         };
@@ -77,6 +85,10 @@ const contact = async (req, res) => {
                 try {
                     resolve();
                     return {
+                        headers: {
+                            "Access-Control-Allow-Origin": "*",
+                            "Access-Control-Allow-Methods": "POST",
+                        },
                         statusCode: 200,
                         body: JSON.stringify(`success`),
                     };
@@ -84,6 +96,10 @@ const contact = async (req, res) => {
                     console.log(error);
                     reject();
                     return {
+                        headers: {
+                            "Access-Control-Allow-Origin": "*",
+                            "Access-Control-Allow-Methods": "POST",
+                        },
                         statusCode: 200,
                         body: JSON.stringify("fail"),
                     };
@@ -93,6 +109,10 @@ const contact = async (req, res) => {
     }
 
     return {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST",
+        },
         statusCode: 200,
         body: JSON.stringify(`success`),
     };
