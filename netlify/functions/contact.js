@@ -69,11 +69,21 @@ const contact = async (req, res) => {
         transporter.sendMail(mailOptions, (err, data) => {
             if (err) {
                 return {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Content-Type",
+                        "Access-Control-Allow-Methods": "GET, POST, OPTION",
+                    },
                     statusCode: 200,
                     body: JSON.stringify("fail"),
                 };
             } else {
                 return {
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Headers": "Content-Type",
+                        "Access-Control-Allow-Methods": "GET, POST, OPTION",
+                    },
                     statusCode: 200,
                     body: JSON.stringify("success"),
                 };
