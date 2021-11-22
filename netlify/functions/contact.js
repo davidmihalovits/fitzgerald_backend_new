@@ -1,28 +1,34 @@
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const { stringify } = require("query-string");
+const https = require("https");
 require("dotenv").config();
 
 const contact = async (req, res) => {
     if (!req.body.recaptchaRes) {
-        return res.json({
-            status: "fail",
-        });
+        return {
+            statusCode: 200,
+            body: JSON.stringify(`fail`),
+        };
     }
 
     const query = stringify({
         secret: process.env.RECAPTCHA_SECRET_KEY,
         response: req.body.recaptchaRes,
-        remoteip: req.connection.remoteAddress,
     });
 
     const verifyURL = `https://google.com/recaptcha/api/siteverify?${query}`;
-    const body = await fetch(verifyURL).then((res) => res.json());
+
+    //const body = await fetch(verifyURL).then((res) => res.json());
+    const body = https.request(verifyURL, (res) => {
+        res.json();
+    });
 
     if (body.success === false) {
-        return res.json({
-            status: "fail",
-        });
+        return {
+            statusCode: 200,
+            body: JSON.stringify(`fail`),
+        };
     } else {
         const CLIENT_ID = process.env.CLIENT_ID;
         const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -66,34 +72,32 @@ const contact = async (req, res) => {
             },
         });
 
-        transporter.sendMail(mailOptions, (err, data) => {
-            if (err) {
-                return {
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers": "Content-Type",
-                        "Access-Control-Allow-Methods": "GET, POST, OPTION",
-                    },
-                    statusCode: 200,
-                    body: JSON.stringify("fail"),
-                };
-            } else {
-                return {
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers": "Content-Type",
-                        "Access-Control-Allow-Methods": "GET, POST, OPTION",
-                    },
-                    statusCode: 200,
-                    body: JSON.stringify("success"),
-                };
-            }
+        await new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (err, data) => {
+                try {
+                    resolve();
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify(`success`),
+                    };
+                } catch (error) {
+                    console.log(error);
+                    reject();
+                    return {
+                        statusCode: 200,
+                        body: JSON.stringify("fail"),
+                    };
+                }
+            });
         });
     }
+
+    return {
+        statusCode: 200,
+        body: JSON.stringify(`success`),
+    };
 };
 
 module.exports.handler = async (event, context) => {
-    // context.callbackWaitsForEmptyEventLoop = false;
-
-    return contact(JSON.parse(event.body));
+    return contact({ body: JSON.parse(event.body) });
 };
