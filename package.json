@@ -1,0 +1,17 @@
+{
+  "name": "fitzgerald_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "googleapis": "^91.0.0",
+    "nodemailer": "^6.7.1",
+    "query-string": "^7.0.1"
+  }
+}
