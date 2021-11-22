@@ -68,13 +68,15 @@ const contact = async (req, res) => {
 
         transporter.sendMail(mailOptions, (err, data) => {
             if (err) {
-                return res.json({
-                    status: "fail",
-                });
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify("fail"),
+                };
             } else {
-                return res.json({
-                    status: "success",
-                });
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify("success"),
+                };
             }
         });
     }
